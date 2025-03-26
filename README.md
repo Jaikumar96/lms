@@ -18,28 +18,25 @@ This is the backend for an Online Learning Management System (LMS) that provides
 - Enrollment & quiz functionality  
 - Role-based access control  
 
-## Project Structure
-
-lms-backend/
-│── src/
-│   ├── main/java/com/example/lms/
-│   │   ├── controllers/        # REST API Controllers
-│   │   ├── services/           # Business Logic
-│   │   ├── repositories/       # Database Operations
-│   │   ├── models/             # Entity Models
-│   ├── main/resources/
-│   │   ├── application.properties  # Database Configuration
-│── pom.xml                      # Maven Dependencies
-│── README.md                     # Project Documentation
+## 📂 Project Structure
+- **/lms/**
+  - **src/main/java/com/example/lms/**
+    - controllers/ → REST API Controllers  
+    - services/ → Business Logic  
+    - repositories/ → Database Operations  
+    - models/ → Entity Models  
+  - **src/main/resources/**  
+    - application.properties → Database Config  
+  - **pom.xml** → Maven Dependencies
 
 ## 🔧 Setup & Installation
 1. Clone the repository:  
    ```bash
-   git clone https://github.com/your-username/lms-backend.git
+   git clone https://github.com/your-username/lms.git
 
 2. Navigate to the project folder:
    ```bash
-   cd lms-backend
+   cd lms
 
 4. Configure application.properties with your MySQL database details.
 
