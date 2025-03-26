@@ -32,7 +32,7 @@ This is the backend for an Online Learning Management System (LMS) that provides
 ## 🔧 Setup & Installation
 1. Clone the repository:  
    ```bash
-   git clone https://github.com/your-username/lms.git
+   git clone https://github.com/Jaikumar96/lms.git
 
 2. Navigate to the project folder:
    ```bash
