@@ -4,6 +4,8 @@ package com.example.lms.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "courses")
 @Getter
@@ -24,5 +26,8 @@ public class Course {
 
     @ManyToOne
     @JoinColumn(name = "instructor_id", nullable = false)
-    private User instructor;  // A course has one instructor
+    private User instructor;
+
+    @ElementCollection
+    private List<String> materialPaths;  // ✅ Store uploaded file paths
 }
