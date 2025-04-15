@@ -3,7 +3,7 @@ import axios from "axios";
 
 const AssignmentsTab = ({ courseId }) => {
   const [assignments, setAssignments] = useState([]);
-  const [submissionContent, setSubmissionContent] = useState({});
+  const [files, setFiles] = useState({});
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -21,47 +21,57 @@ const AssignmentsTab = ({ courseId }) => {
     fetchAssignments();
   }, [courseId]);
 
+  const handleFileChange = (assignmentId, file) => {
+    setFiles((prev) => ({ ...prev, [assignmentId]: file }));
+  };
+
   const handleSubmit = async (assignmentId) => {
+    const file = files[assignmentId];
+    if (!file) return alert("Please upload a file");
+
+    const formData = new FormData();
+    formData.append("assignmentId", assignmentId);
+    formData.append("file", file);
+
     try {
-      await axios.post(
-        `http://localhost:8080/api/assignments/submit`,
-        {
-          assignmentId,
-          content: submissionContent[assignmentId] || "",
+      await axios.post(`http://localhost:8080/api/assignments/submit`, formData, {
+        headers: {
+          Authorization: token,
+          "Content-Type": "multipart/form-data",
         },
-        { headers: { Authorization: token } }
-      );
+      });
       alert("Assignment submitted!");
     } catch (err) {
-      alert("Submission failed.");
-      console.error(err);
+      console.error("Submission failed", err);
+      alert("Submission failed");
     }
   };
 
   return (
     <div>
-      <h3 className="text-xl font-bold mb-4">Assignments</h3>
+      <h3 className="text-xl font-bold mb-4 text-purple-700">Assignments</h3>
       {assignments.length === 0 ? (
         <p className="text-gray-500">No assignments available.</p>
       ) : (
         <div className="space-y-6">
           {assignments.map((a) => (
             <div key={a.id} className="bg-white p-4 shadow rounded">
-              <h4 className="font-semibold">{a.title}</h4>
-              <textarea
-                rows={3}
-                className="w-full mt-2 p-2 border rounded"
-                placeholder="Enter your answer..."
-                value={submissionContent[a.id] || ""}
-                onChange={(e) =>
-                  setSubmissionContent((prev) => ({ ...prev, [a.id]: e.target.value }))
-                }
+              <h4 className="font-semibold text-purple-700">{a.title}</h4>
+              <p className="text-gray-600 mb-2">{a.description}</p>
+              <p className="text-sm text-gray-400 mb-2">Due: {a.dueDate}</p>
+
+              <input
+                type="file"
+                accept="application/pdf"
+                onChange={(e) => handleFileChange(a.id, e.target.files[0])}
+                className="mb-2"
               />
+
               <button
                 onClick={() => handleSubmit(a.id)}
-                className="mt-2 bg-purple-600 text-white px-4 py-2 rounded"
+                className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
               >
-                Submit
+                Submit PDF
               </button>
             </div>
           ))}

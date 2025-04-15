@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface AssignmentSubmissionRepository extends JpaRepository<AssignmentSubmission, Long> {
     List<AssignmentSubmission> findByStudentEmail(String email);
     Optional<AssignmentSubmission> findByAssignmentIdAndStudentEmail(Long assignmentId, String email);
+    List<AssignmentSubmission> findByAssignmentId(Long assignmentId);
+
 }

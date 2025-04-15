@@ -6,12 +6,24 @@ import java.time.LocalDateTime;
 
 @Entity
 public class AssignmentSubmission {
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
     private Assignment assignment;
+
+    @Column(name = "file_name")
+    private String fileName;
+
 
     public Long getId() {
         return id;

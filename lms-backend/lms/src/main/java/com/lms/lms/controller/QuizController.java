@@ -1,5 +1,6 @@
 package com.lms.lms.controller;
 
+import com.lms.lms.dto.QuestionDTO;
 import com.lms.lms.dto.QuizDTO;
 import com.lms.lms.dto.QuizSubmission;
 import com.lms.lms.model.Course;
@@ -55,16 +56,24 @@ public class QuizController {
         return ResponseEntity.ok("Quiz added successfully");
     }
 
-    @GetMapping("/quizzes/course/{courseId}")
-    public ResponseEntity<List<QuizDTO>> getQuizzesByCourse(@PathVariable Long courseId) {
-        List<Quiz> quizzes = quizRepository.findByCourseId(courseId);
 
-        List<QuizDTO> quizDTOs = quizzes.stream()
-                .map(q -> new QuizDTO(q.getId(), q.getTitle(), q.getCourse().getId()))
+    }
+    @GetMapping("/quizzes/{id}")
+    public ResponseEntity<QuizDTO> getQuizById(@PathVariable Long id) {
+        Quiz quiz = quizRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Quiz not found"));
+
+        // Convert the questions to QuestionDTO
+        List<QuestionDTO> questionDTOs = quiz.getQuestions().stream()
+                .map(q -> new QuestionDTO(q.getId(), q.getQuestionText(), q.getOptionA(), q.getOptionB(), q.getOptionC(), q.getOptionD()))
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(quizDTOs);
+        // Create and return the QuizDTO
+        QuizDTO quizDTO = new QuizDTO(quiz.getId(), quiz.getTitle(), quiz.getCourse().getId(), questionDTOs);
+        return ResponseEntity.ok(quizDTO);
     }
+
+
 
 
     @PostMapping("/quizzes/submit")

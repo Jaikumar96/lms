@@ -66,8 +66,9 @@ public class SecurityConfig {
                                 "/api/home",
                                 "/api/courses/search",
                                 "/api/courses/filter/**").permitAll()
-                        .requestMatchers("/api/assignments/**").hasRole("INSTRUCTOR")
-                        .requestMatchers("/api/assignments/**").authenticated()
+                        .requestMatchers("/api/assignments/**").permitAll()
+                        .requestMatchers("/api/assignments/download/**").permitAll()
+                        .requestMatchers("/assignments/files/**").permitAll()
                         .requestMatchers("/videos/**").permitAll()
                         .requestMatchers("/api/courses", "/api/courses/**").permitAll()
                         .requestMatchers("/api/student/**").hasRole("STUDENT")
@@ -111,6 +112,9 @@ public class SecurityConfig {
         public void addResourceHandlers(ResourceHandlerRegistry registry) {
             registry.addResourceHandler("/videos/**")
                     .addResourceLocations("file:///C:/Users/admin/Downloads/uploads/videos/");
+
+            registry.addResourceHandler("/assignments/files/**")
+                    .addResourceLocations("file:///C:/Users/admin/Downloads/uploads/assignments/");
         }
     }
 
