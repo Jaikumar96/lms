@@ -67,3 +67,23 @@ npm run dev
 - User progress tracking
 - Quiz management system
 - Frontend portal for admin and students
+
+##Landing Page 
+![landing](https://github.com/user-attachments/assets/82874bb5-530f-489a-8349-cae7f5b5da8a)
+
+##Login Page 
+![login](https://github.com/user-attachments/assets/1f7eb184-e761-43d6-8e9a-aa5dd845a4e9)
+
+##Student DashBoard 
+![Student Dashboard](https://github.com/user-attachments/assets/b1df7642-3661-4fe2-8d77-e5435d7a488a)
+
+##Course Page 
+![course_page](https://github.com/user-attachments/assets/22c8cd90-458f-465c-bfb0-7e9c38a9d4e4)
+
+##Instructor DashBoard 
+![Instructor_page](https://github.com/user-attachments/assets/2a034755-8f98-4b9a-aa9f-6888b0a49a17)
+
+##Admin Dashboard 
+![Admin_page](https://github.com/user-attachments/assets/acc0cf9d-af96-44fb-a42a-879338092685)
+
+
