@@ -27,12 +27,12 @@ An Online Learning Management System (LMS) helps manage courses, students, instr
    
 ```bash
 cd lms-backend/lms
-
+```
 2. Start the backend server:
 
 ```bash
 mvn spring-boot:run
-
+```
 
 > Note: Make sure your MySQL/PostgreSQL service is running and the database configuration is correctly set in the `application.properties` file.
 
@@ -42,19 +42,19 @@ mvn spring-boot:run
 
 ```bash
 cd lms-frontend
-
+```
 
 2. Install dependencies:
 
 ```bash
 npm install
-
+```
 
 3. Start the frontend development server:
 
 ```bash
 npm run dev
-
+```
 ## Testing
 
 - Backend testing is implemented using JUnit and Mockito.
