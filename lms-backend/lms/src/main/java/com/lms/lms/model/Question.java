@@ -33,9 +33,10 @@ public class Question {
     @Getter
     private String correctAnswer;
 
-    @Setter
     @ManyToOne
+    @JoinColumn(name = "quiz_id")
     private Quiz quiz;
+
 
 }
 

@@ -12,7 +12,7 @@ const QuizzesTab = ({ courseId }) => {
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
-        const res = await axios.get(`http://localhost:8080/api/quizzes/course/${courseId}`, {
+        const res = await axios.get(`http://localhost:8080/api/student/quizzes/${courseId}`, {
           headers: { Authorization: token },
         });
         setQuizzes(res.data);
@@ -23,17 +23,10 @@ const QuizzesTab = ({ courseId }) => {
     fetchQuizzes();
   }, [courseId]);
 
-  const loadFullQuiz = async (quizId) => {
-    try {
-      const res = await axios.get(`http://localhost:8080/api/quizzes/${quizId}`, {
-        headers: { Authorization: token },
-      });
-      setSelectedQuiz(res.data);
-      setShowModal(true);
-    } catch (err) {
-      alert("Could not load quiz. Please try again.");
-      console.error("Failed to load full quiz data", err);
-    }
+  const loadFullQuiz = async (quiz) => {
+    setSelectedQuiz(quiz);
+    setAnswers({});
+    setShowModal(true);
   };
 
   const handleChangeAnswer = (qId, value) => {
@@ -43,15 +36,15 @@ const QuizzesTab = ({ courseId }) => {
   const handleSubmitQuiz = async () => {
     try {
       const res = await axios.post(
-        `http://localhost:8080/api/quizzes/submit`,
+        `http://localhost:8080/api/student/quizzes/submit`,
         {
           quizId: selectedQuiz.id,
           answers,
         },
         { headers: { Authorization: token } }
       );
-      alert(`Quiz submitted! Score: ${res.data}`);
-      setScore(res.data);
+      alert(`Quiz submitted! Score: ${res.data.score}`);
+      setScore(res.data.score);
       setShowModal(false);
     } catch (err) {
       alert("Failed to submit quiz.");
@@ -67,10 +60,13 @@ const QuizzesTab = ({ courseId }) => {
       ) : (
         <ul className="space-y-3">
           {quizzes.map((quiz) => (
-            <li key={quiz.id} className="flex justify-between items-center bg-white p-4 rounded shadow">
+            <li
+              key={quiz.id}
+              className="flex justify-between items-center bg-white p-4 rounded shadow"
+            >
               <span>{quiz.title}</span>
               <button
-                onClick={() => loadFullQuiz(quiz.id)}
+                onClick={() => loadFullQuiz(quiz)}
                 className="bg-purple-600 text-white px-4 py-1 rounded"
               >
                 Take Quiz
@@ -98,7 +94,7 @@ const QuizzesTab = ({ courseId }) => {
                         checked={answers[q.id] === opt}
                         onChange={() => handleChangeAnswer(q.id, opt)}
                       />{" "}
-                      {q[`option${opt}`]}
+                      {q[`option${opt}`] || "N/A"}
                     </label>
                   ))}
                 </div>
@@ -124,7 +120,9 @@ const QuizzesTab = ({ courseId }) => {
       )}
 
       {score !== null && (
-        <p className="mt-4 text-green-600 font-semibold">Your last score: {score}</p>
+        <p className="mt-4 text-green-600 font-semibold">
+          Your last score: {score}
+        </p>
       )}
     </div>
   );

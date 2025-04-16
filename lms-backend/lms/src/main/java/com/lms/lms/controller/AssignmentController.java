@@ -129,14 +129,18 @@ public class AssignmentController {
 
         return ResponseEntity.ok("Assignment created successfully!");
     }
+
     @GetMapping("/files/{fileName}")
     public ResponseEntity<byte[]> downloadFile(@PathVariable String fileName) throws IOException {
         Path filePath = Paths.get("C:\\Users\\admin\\Downloads\\uploads\\assignments", fileName);
         byte[] fileBytes = Files.readAllBytes(filePath);
+
         return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=\"" + fileName + "\"")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(fileBytes);
     }
+
 
 
 }

@@ -27,6 +27,29 @@ public class QuizSubmission {
     @JoinColumn(name = "course_id")
     private Course course;
 
+    private Integer totalQuestions;  //
+    private Integer correctAnswers;
+
+    public void setScore(Double score) {
+        this.score = score;
+    }
+
+    public Integer getTotalQuestions() {
+        return totalQuestions;
+    }
+
+    public void setTotalQuestions(Integer totalQuestions) {
+        this.totalQuestions = totalQuestions;
+    }
+
+    public Integer getCorrectAnswers() {
+        return correctAnswers;
+    }
+
+    public void setCorrectAnswers(Integer correctAnswers) {
+        this.correctAnswers = correctAnswers;
+    }
+
     public double getScore() {
         return this.score;
     }

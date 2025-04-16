@@ -2,13 +2,12 @@ package com.lms.lms.model;
 
 import jakarta.persistence.*;
 
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
 @Entity
 public class AssignmentSubmission {
-    public String getFileName() {
-        return fileName;
-    }
+
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
@@ -45,6 +44,7 @@ public class AssignmentSubmission {
         return fileUrl;
     }
 
+
     public void setFileUrl(String fileUrl) {
         this.fileUrl = fileUrl;
     }
@@ -71,4 +71,10 @@ public class AssignmentSubmission {
     private String fileUrl; // Or text if you store the content
     private LocalDateTime submittedAt;
 
+    public String getFileName() {
+        if (fileUrl == null) return null;
+        return Paths.get(fileUrl).getFileName().toString();
+    }
+
 }
+

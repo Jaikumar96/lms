@@ -2,47 +2,36 @@ package com.lms.lms.controller;
 
 import com.lms.lms.dto.QuestionDTO;
 import com.lms.lms.dto.QuizDTO;
+import com.lms.lms.dto.QuizSubmissionDTO;
+import com.lms.lms.model.*;
+import com.lms.lms.repository.*;
 import com.lms.lms.dto.QuizSubmission;
-import com.lms.lms.model.Course;
-import com.lms.lms.model.Question;
-import com.lms.lms.model.Quiz;
-import com.lms.lms.repository.QuizSubmissionRepository;
-import com.lms.lms.service.JwtService;
-import com.lms.lms.repository.CourseRepository;
-import com.lms.lms.repository.QuestionRepository;
-import com.lms.lms.repository.QuizRepository;
-import jakarta.servlet.http.HttpServletRequest;
+import com.lms.lms.service.QuizService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class QuizController {
 
+    private final QuizRepository quizRepository;
+    private final CourseRepository courseRepository;
+    private final QuestionRepository questionRepository;
+    private final UserRepository userRepository;
     @Autowired
-    private QuizRepository quizRepository;
+    private QuizService quizService;
 
-    @Autowired
-    private CourseRepository courseRepository;
+    // ✅ INSTRUCTOR - Create a quiz with questions
+    @PostMapping("/instructor/quizzes")
+    public ResponseEntity<String> createQuiz(
+            @RequestBody Quiz quiz,
+            @RequestParam Long courseId) {
 
-    @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private QuizSubmissionRepository quizSubmissionRepo;
-
-
-
-    @PostMapping("/quizzes")
-    public ResponseEntity<String> addQuiz(@RequestBody Quiz quiz, @RequestParam Long courseId) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
 
@@ -53,36 +42,45 @@ public class QuizController {
         }
 
         quizRepository.save(quiz);
-        return ResponseEntity.ok("Quiz added successfully");
+        return ResponseEntity.ok("Quiz created successfully");
+    }
+
+    // ✅ STUDENT - Get quizzes for a course (DTO version)
+    @GetMapping("/student/quizzes/{courseId}")
+    public ResponseEntity<List<QuizDTO>> getQuizzesForCourse(@PathVariable Long courseId) {
+        List<Quiz> quizzes = quizRepository.findByCourseId(courseId);
+
+        List<QuizDTO> quizDTOs = quizzes.stream().map(quiz -> {
+            QuizDTO quizDTO = new QuizDTO();
+            quizDTO.setId(quiz.getId());
+            quizDTO.setTitle(quiz.getTitle());
+            quizDTO.setCourseId(quiz.getCourse().getId());
+
+            List<QuestionDTO> questionDTOs = quiz.getQuestions().stream().map(q -> {
+                QuestionDTO qdto = new QuestionDTO();
+                qdto.setId(q.getId());
+                qdto.setQuestionText(q.getQuestionText());
+                qdto.setOptionA(q.getOptionA());
+                qdto.setOptionB(q.getOptionB());
+                qdto.setOptionC(q.getOptionC());
+                qdto.setOptionD(q.getOptionD());
+                return qdto;
+            }).toList();
+
+            quizDTO.setQuestions(questionDTOs);
+            return quizDTO;
+        }).toList();
+
+        return ResponseEntity.ok(quizDTOs);
     }
 
 
-    }
-    @GetMapping("/quizzes/{id}")
-    public ResponseEntity<QuizDTO> getQuizById(@PathVariable Long id) {
-        Quiz quiz = quizRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Quiz not found"));
-
-        // Convert the questions to QuestionDTO
-        List<QuestionDTO> questionDTOs = quiz.getQuestions().stream()
-                .map(q -> new QuestionDTO(q.getId(), q.getQuestionText(), q.getOptionA(), q.getOptionB(), q.getOptionC(), q.getOptionD()))
-                .collect(Collectors.toList());
-
-        // Create and return the QuizDTO
-        QuizDTO quizDTO = new QuizDTO(quiz.getId(), quiz.getTitle(), quiz.getCourse().getId(), questionDTOs);
-        return ResponseEntity.ok(quizDTO);
-    }
-
-
-
-
-    @PostMapping("/quizzes/submit")
-    public ResponseEntity<Double> submitQuiz(@RequestBody QuizSubmission submission) {
+    // ✅ STUDENT - Submit quiz and get score
+    @PostMapping("/student/quizzes/submit")
+    public ResponseEntity<Map<String, Object>> submitQuiz(@RequestBody QuizSubmission submission) {
         Map<Long, String> submittedAnswers = submission.getAnswers();
         double totalQuestions = submittedAnswers.size();
         double correct = 0;
-
-        System.out.println("Submitted Answers: " + submittedAnswers);
 
         for (Map.Entry<Long, String> entry : submittedAnswers.entrySet()) {
             Long questionId = entry.getKey();
@@ -91,21 +89,25 @@ public class QuizController {
             Question question = questionRepository.findById(questionId)
                     .orElseThrow(() -> new RuntimeException("Question not found"));
 
-            System.out.println("Question ID: " + questionId);
-            System.out.println("Correct Answer: " + question.getCorrectAnswer());
-            System.out.println("Submitted Answer: " + submittedAnswer);
-
             if (question.getCorrectAnswer().equalsIgnoreCase(submittedAnswer)) {
                 correct++;
             }
         }
 
         double score = (correct / totalQuestions) * 100.0;
-        System.out.println("Score: " + score);
-        return ResponseEntity.ok(score);
+        Map<String, Object> result = new HashMap<>();
+        result.put("score", score);
+        result.put("correct", (int) correct);
+        result.put("total", (int) totalQuestions);
+
+        return ResponseEntity.ok(result);
     }
 
+    // ✅ INSTRUCTOR - Get submissions for a quiz
+    @GetMapping("/instructor/quizzes/submissions/{quizId}")
+    public ResponseEntity<List<QuizSubmissionDTO>> getQuizSubmissions(@PathVariable Long quizId) {
+        List<QuizSubmissionDTO> submissions = quizService.getQuizSubmissions(quizId);
+        return ResponseEntity.ok(submissions);
+    }
 
-    @Autowired
-    private QuestionRepository questionRepository;
 }

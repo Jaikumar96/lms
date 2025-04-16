@@ -20,4 +20,5 @@ public interface QuizSubmissionRepository extends JpaRepository<QuizSubmission, 
 
     List<QuizSubmission> findByStudentEmailAndCourseId(String email, Long courseId);
 
+    List<QuizSubmission> findByQuizId(Long quizId);
 }

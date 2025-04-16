@@ -30,10 +30,8 @@ public class Quiz {
     @ManyToOne
     private Course course;
 
-    @Setter
-    @Getter
-    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
-    private List<Question> questions = new ArrayList<>();
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Question> questions;
 
 
     public String getTitle() { return title; }

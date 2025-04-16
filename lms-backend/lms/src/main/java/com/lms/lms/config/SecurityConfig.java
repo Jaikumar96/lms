@@ -67,6 +67,7 @@ public class SecurityConfig {
                                 "/api/courses/search",
                                 "/api/courses/filter/**").permitAll()
                         .requestMatchers("/api/assignments/**").permitAll()
+                        .requestMatchers("/api/student/**").permitAll()
                         .requestMatchers("/api/assignments/download/**").permitAll()
                         .requestMatchers("/assignments/files/**").permitAll()
                         .requestMatchers("/videos/**").permitAll()
@@ -83,7 +84,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 // Basic auth support for now (or remove if using only JWT)
-                .httpBasic(withDefaults())
+                .httpBasic(AbstractHttpConfigurer::disable)
+
 
                 // Add JWT authentication filter before the UsernamePasswordAuthenticationFilter in the chain
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
