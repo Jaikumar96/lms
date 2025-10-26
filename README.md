@@ -1,7 +1,5 @@
 # Online Learning Management System (LMS)
 
-## WEEK 03 - Internship Project
-
 An Online Learning Management System (LMS) helps manage courses, students, instructors, and assessments. This project simulates a real-world learning platform with features like course registration, user role management, progress tracking, and quiz handling.
 
 ## Technologies Used
